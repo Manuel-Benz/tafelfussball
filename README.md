@@ -37,6 +37,17 @@ A: 56
 ---
 ```
 
+## Formeln (KaTeX)
+
+Fragen und Lösungen dürfen mathematische Formeln enthalten. Schreibe LaTeX zwischen `$…$` (inline) oder `$$…$$` (abgesetzt):
+
+```
+F: Löse die quadratische Gleichung $x^2 - 5x + 6 = 0$.
+A: $x_1 = 2$, $x_2 = 3$
+```
+
+Gerendert wird mit [KaTeX](https://katex.org/) (per CDN geladen). Ist beim Laden kein Internet verfügbar, bleibt der Rohtext lesbar.
+
 ## Lokal ausführen
 
 Einfach `index.html` im Browser öffnen. Für die zuverlässigste Fenster-Synchronisation über einen lokalen Server starten:
@@ -48,4 +59,4 @@ python3 -m http.server 8000
 
 ## Technik
 
-Eine einzige `index.html` — Vanilla HTML/CSS/JS, keine Abhängigkeiten, kein Build-Schritt.
+Eine einzige `index.html` — Vanilla HTML/CSS/JS, kein Build-Schritt. Einzige externe Abhängigkeit: KaTeX (per CDN, nur für die Formeldarstellung).

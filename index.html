@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Tafelfussball</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
 <style>
   :root {
     --team1: #2563eb;
@@ -523,6 +524,10 @@ A: 56
 <div class="goal-flash" id="goalFlash">TOR!</div>
 <canvas id="confetti"></canvas>
 
+<!-- KaTeX für Formeldarstellung ($…$ inline, $$…$$ abgesetzt). Fällt das CDN aus, bleibt der Rohtext lesbar. -->
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+
 <script>
 (() => {
   "use strict";
@@ -670,8 +675,11 @@ A: 56
     } else {
       qEl.innerHTML = '<span class="empty-hint">Noch keine Frage ausgewählt</span>';
     }
+    renderMath(qEl);
     if (isTeacher) {
-      document.getElementById("answerText").textContent = task ? task.a : "—";
+      const aEl = document.getElementById("answerText");
+      aEl.textContent = task ? task.a : "—";
+      renderMath(aEl);
       renderControls();
     }
   }
@@ -731,6 +739,22 @@ A: 56
     return String(s).replace(/[&<>"']/g, c => (
       { "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c]
     ));
+  }
+
+  // KaTeX: $…$ (inline) und $$…$$ (abgesetzt) im Element rendern. Ohne KaTeX bleibt der Rohtext stehen.
+  function renderMath(el) {
+    if (!el || typeof window.renderMathInElement !== "function") return;
+    try {
+      window.renderMathInElement(el, {
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "$", right: "$", display: false },
+          { left: "\\(", right: "\\)", display: false },
+          { left: "\\[", right: "\\]", display: true }
+        ],
+        throwOnError: false
+      });
+    } catch {}
   }
 
   // ---------- Game actions ----------
