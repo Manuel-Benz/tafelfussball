@@ -28,6 +28,10 @@ Beide Fenster synchronisieren sich live über `BroadcastChannel`, mit `localStor
 - **↺ Fragen zurücksetzen** — startet die Runde neu (Aufgaben bleiben erhalten); „Punkte zurücksetzen" und „Ball in die Mitte" wirken separat.
 - **Alles zurücksetzen** — Punkte, Ball und Fragerunde in einem Klick; die Aufgabenliste bleibt erhalten.
 
+## Sprache
+
+In den Einstellungen der Lehrer-Ansicht lässt sich die Oberfläche zwischen **Deutsch und Englisch** umschalten (DE/EN) — Beamer-Ansicht und Startseite wechseln mit. Der Import versteht `F:` und `Q:` als Frage-Marker.
+
 ## Aufgaben aus PDF importieren
 
 1. Aufgabenblatt (PDF) in einem KI-Tool (Claude/ChatGPT) öffnen.

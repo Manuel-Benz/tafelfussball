@@ -436,35 +436,35 @@
 <div id="launcher">
   <div class="launcher-inner">
   <h1>⚽ Tafelfussball</h1>
-  <p>Öffne die <b>Beamer-Ansicht</b> im Vollbild auf dem Projektor und die <b>Lehrer-Ansicht</b> auf deinem Laptop. Beide Fenster synchronisieren sich automatisch.</p>
+  <p data-i18n-html="intro">Öffne die <b>Beamer-Ansicht</b> im Vollbild auf dem Projektor und die <b>Lehrer-Ansicht</b> auf deinem Laptop. Beide Fenster synchronisieren sich automatisch.</p>
   <div class="launch-cards">
     <a class="launch-card" id="cardBeamer" href="?view=beamer" target="_blank" rel="noopener">
       <div class="emoji">📺</div>
-      <h2>Beamer-Ansicht</h2>
-      <p>Für die Klasse. Spielfeld, Punkte, Frage — ohne Lösung. Öffnet als eigenes Fenster.</p>
+      <h2 data-i18n="beamerCardTitle">Beamer-Ansicht</h2>
+      <p data-i18n="beamerCardText">Für die Klasse. Spielfeld, Punkte, Frage — ohne Lösung. Öffnet als eigenes Fenster.</p>
     </a>
     <a class="launch-card" href="?view=lehrer" target="_blank" rel="noopener">
       <div class="emoji">🎛️</div>
-      <h2>Lehrer-Ansicht</h2>
-      <p>Steuerung, Aufgabenverwaltung und die Lösung.</p>
+      <h2 data-i18n="teacherCardTitle">Lehrer-Ansicht</h2>
+      <p data-i18n="teacherCardText">Steuerung, Aufgabenverwaltung und die Lösung.</p>
     </a>
   </div>
   <details class="info-box">
-    <summary>📄 Aufgaben aus einem PDF importieren — so geht's</summary>
+    <summary data-i18n="importHow">📄 Aufgaben aus einem PDF importieren — so geht's</summary>
     <div class="info-body">
-      <ol>
+      <ol data-i18n-html="steps">
         <li>Öffne dein Aufgabenblatt (PDF) in einem KI-Tool wie <b>Claude</b> oder <b>ChatGPT</b>.</li>
         <li>Kopiere den Prompt unten und füge ihn zusammen mit dem PDF ein.</li>
         <li>Die KI liefert dir alle Aufgaben im Format <code>F:</code> / <code>A:</code> / <code>---</code>.</li>
         <li>Kopiere diese Ausgabe und füge sie in der <b>Lehrer-Ansicht</b> unter „Import" ein — die Aufgaben werden automatisch angehängt.</li>
       </ol>
 
-      <div class="prompt-block" id="promptText">Extrahiere alle Übungsaufgaben und deren Lösungen aus diesem PDF. Formatiere die Ausgabe exakt so: Für jede Aufgabe eine Zeile 'F: &lt;Frage&gt;', eine Zeile 'A: &lt;Antwort&gt;', dann eine Zeile mit nur '---' als Trennzeichen. Mathematische Formeln als LaTeX in Dollarzeichen schreiben ($...$ für inline, $$...$$ für abgesetzt). Keine zusätzlichen Erklärungen oder Nummerierungen. Gib das Ergebnis als reinen Text aus, den ich als .txt-Datei speichern kann.</div>
+      <div class="prompt-block" id="promptText" data-i18n="kiPrompt">Extrahiere alle Übungsaufgaben und deren Lösungen aus diesem PDF. Formatiere die Ausgabe exakt so: Für jede Aufgabe eine Zeile 'F: &lt;Frage&gt;', eine Zeile 'A: &lt;Antwort&gt;', dann eine Zeile mit nur '---' als Trennzeichen. Mathematische Formeln als LaTeX in Dollarzeichen schreiben ($...$ für inline, $$...$$ für abgesetzt). Keine zusätzlichen Erklärungen oder Nummerierungen. Gib das Ergebnis als reinen Text aus, den ich als .txt-Datei speichern kann.</div>
       <div class="copy-row">
-        <button id="launchCopyPrompt">📋 Prompt kopieren</button>
+        <button id="launchCopyPrompt" data-i18n="copyPromptBtn">📋 Prompt kopieren</button>
       </div>
 
-      <div class="format-example">F: Was ist die Hauptstadt der Schweiz?
+      <div class="format-example" data-i18n="formatExample">F: Was ist die Hauptstadt der Schweiz?
 A: Bern
 ---
 F: Wie viel ist 7 × 8?
@@ -473,7 +473,7 @@ A: 56
     </div>
   </details>
 
-  <p style="font-size:13px">Tipp: Für die beste Synchronisation die Datei über einen lokalen Webserver öffnen (funktioniert aber meist auch per Doppelklick).</p>
+  <p style="font-size:13px" data-i18n="launcherTip">Tipp: Für die beste Synchronisation die Datei über einen lokalen Webserver öffnen (funktioniert aber meist auch per Doppelklick).</p>
   </div>
 </div>
 
@@ -496,10 +496,10 @@ A: 56
   </div>
 
   <section class="question-area">
-    <div class="q-label">Frage</div>
+    <div class="q-label" data-i18n="qLabel">Frage</div>
     <div class="question"><span id="questionText"><span class="empty-hint">Noch keine Frage ausgewählt</span></span><span class="answer-inline" id="answerInline"></span></div>
     <div class="answer" id="answerBox">
-      <span class="a-label">Lösung</span>
+      <span class="a-label" data-i18n="aLabel">Lösung</span>
       <span id="answerText"></span>
     </div>
   </section>
@@ -507,92 +507,97 @@ A: 56
   <!-- ============ Controls (nur Lehrer) ============ -->
   <aside class="controls">
     <div class="panel">
-      <h3>Spielzug</h3>
+      <h3 data-i18n="move">Spielzug</h3>
       <div class="row grow">
         <button class="t1 big" id="moveT1">◀ Team 1</button>
         <button class="t2 big" id="moveT2">Team 2 ▶</button>
       </div>
       <div class="row grow" style="margin-top:8px">
-        <button class="ghost" id="resetBall">Ball in die Mitte</button>
+        <button class="ghost" id="resetBall" data-i18n="ballCenter">Ball in die Mitte</button>
       </div>
       <div class="row grow" style="margin-top:8px">
-        <button class="ghost danger" id="resetScore">Punkte zurücksetzen</button>
+        <button class="ghost danger" id="resetScore" data-i18n="resetScore">Punkte zurücksetzen</button>
       </div>
       <div class="row grow" style="margin-top:8px">
-        <button class="ghost danger" id="resetAll" title="Punkte, Ball und Fragerunde zurücksetzen — Aufgaben bleiben erhalten">Alles zurücksetzen</button>
+        <button class="ghost danger" id="resetAll" data-i18n="resetAll" data-i18n-title="resetAllTitle" title="Punkte, Ball und Fragerunde zurücksetzen — Aufgaben bleiben erhalten">Alles zurücksetzen</button>
       </div>
-      <div class="counter" style="margin-top:8px">Tastatur: ←/→ Ball · ⌘→ weiter (Frage/Antwort) · ⌘← Frage zurück · L Lösung</div>
+      <div class="counter" style="margin-top:8px" data-i18n="kbHint">Tastatur: ←/→ Ball · ⌘→ weiter (Frage/Antwort) · ⌘← Frage zurück · L Lösung</div>
     </div>
 
     <div class="panel">
-      <h3>Aktuelle Frage</h3>
+      <h3 data-i18n="currentQuestion">Aktuelle Frage</h3>
       <div class="row grow">
         <button class="primary start-mode" id="nextTask">▶ Spiel starten</button>
       </div>
       <div class="row grow" style="margin-top:8px">
-        <button class="ghost" id="resetTasksBtn" title="Zurück zum Start — Aufgaben bleiben erhalten">↺ Fragen zurücksetzen</button>
+        <button class="ghost" id="resetTasksBtn" data-i18n="resetTasks" data-i18n-title="resetTasksTitle" title="Zurück zum Start — Aufgaben bleiben erhalten">↺ Fragen zurücksetzen</button>
       </div>
-      <label class="field-label">Reihenfolge</label>
+      <label class="field-label" data-i18n="order">Reihenfolge</label>
       <div class="toggle-group" id="orderToggle">
-        <button data-order="sequential" class="active">Der Reihe nach</button>
-        <button data-order="random">Zufällig</button>
+        <button data-order="sequential" class="active" data-i18n="orderSeq">Der Reihe nach</button>
+        <button data-order="random" data-i18n="orderRnd">Zufällig</button>
       </div>
       <div class="counter" id="taskCounter" style="margin-top:8px"></div>
     </div>
 
     <div class="panel">
-      <h3>Einstellungen</h3>
-      <label class="field-label">Stationen pro Seite (1–6)</label>
+      <h3 data-i18n="settings">Einstellungen</h3>
+      <label class="field-label" data-i18n="stations">Stationen pro Seite (1–6)</label>
       <div class="stepper">
         <button class="icon" id="stMinus">−</button>
         <input type="number" id="stations" min="1" max="6" value="3">
         <button class="icon" id="stPlus">+</button>
       </div>
-      <label class="field-label">Name Team 1</label>
+      <label class="field-label" data-i18n="name1">Name Team 1</label>
       <input type="text" id="name1" value="Team 1">
-      <label class="field-label">Name Team 2</label>
+      <label class="field-label" data-i18n="name2">Name Team 2</label>
       <input type="text" id="name2" value="Team 2">
-    </div>
-
-    <div class="panel">
-      <h3>Aufgabe hinzufügen</h3>
-      <label class="field-label">Frage</label>
-      <input type="text" id="newQ" placeholder="z. B. Was ist 7 × 8?">
-      <label class="field-label">Lösung</label>
-      <input type="text" id="newA" placeholder="z. B. 56">
-      <div class="row" style="margin-top:8px">
-        <button class="primary" id="addTask">Hinzufügen</button>
+      <label class="field-label" data-i18n="language">Sprache</label>
+      <div class="toggle-group" id="langToggle">
+        <button data-lang="de" class="active">DE</button>
+        <button data-lang="en">EN</button>
       </div>
     </div>
 
     <div class="panel">
-      <h3>Aufgaben (<span id="taskCount">0</span>)</h3>
+      <h3 data-i18n="addTaskTitle">Aufgabe hinzufügen</h3>
+      <label class="field-label" data-i18n="qLabel">Frage</label>
+      <input type="text" id="newQ" data-i18n-ph="qPh" placeholder="z. B. Was ist 7 × 8?">
+      <label class="field-label" data-i18n="aLabel">Lösung</label>
+      <input type="text" id="newA" data-i18n-ph="aPh" placeholder="z. B. 56">
+      <div class="row" style="margin-top:8px">
+        <button class="primary" id="addTask" data-i18n="add">Hinzufügen</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3><span data-i18n="tasks">Aufgaben</span> (<span id="taskCount">0</span>)</h3>
       <div id="taskList"></div>
       <div class="row" style="margin-top:8px">
-        <button class="ghost danger" id="clearTasks">Alle löschen</button>
+        <button class="ghost danger" id="clearTasks" data-i18n="deleteAll">Alle löschen</button>
       </div>
     </div>
 
     <div class="panel">
-      <h3>Import (KI-Vorverarbeitung)</h3>
-      <div class="help-box">
+      <h3 data-i18n="importTitle">Import (KI-Vorverarbeitung)</h3>
+      <div class="help-box" data-i18n-html="importHelp">
         PDF → KI-Tool (Claude/ChatGPT) mit dem Prompt unten → Ausgabe hier einfügen.<br>
         Format je Aufgabe: <code>F: Frage</code> · <code>A: Antwort</code> · <code>---</code><br>
         Formeln als LaTeX: <code>$…$</code> bzw. <code>$$…$$</code>
       </div>
       <div class="row" style="margin:8px 0">
-        <button class="ghost" id="copyPrompt">📋 KI-Prompt kopieren</button>
+        <button class="ghost" id="copyPrompt" data-i18n="copyKiPrompt">📋 KI-Prompt kopieren</button>
       </div>
       <div class="dropzone" id="dropzone">
-        📥 <b>Datei hierher ziehen</b><br>
-        <small>oder klicken zum Auswählen (.txt im F:/A:/---‑Format)</small>
+        <span data-i18n-html="dropHere">📥 <b>Datei hierher ziehen</b><br>
+        <small>oder klicken zum Auswählen (.txt im F:/A:/---‑Format)</small></span>
         <input type="file" id="fileInput" accept=".txt,.md,.text,text/plain" multiple hidden>
       </div>
       <div class="drop-status" id="dropStatus"></div>
-      <label class="field-label">… oder Text direkt einfügen</label>
-      <textarea id="importText" placeholder="F: ...&#10;A: ...&#10;---"></textarea>
+      <label class="field-label" data-i18n="orPaste">… oder Text direkt einfügen</label>
+      <textarea id="importText" data-i18n-ph="importPh" placeholder="F: ...&#10;A: ...&#10;---"></textarea>
       <div class="row" style="margin-top:8px">
-        <button class="primary" id="importBtn">Einfügen &amp; anhängen</button>
+        <button class="primary" id="importBtn" data-i18n="importBtn">Einfügen &amp; anhängen</button>
       </div>
     </div>
   </aside>
@@ -600,7 +605,7 @@ A: 56
 
 <div class="goal-flash" id="goalFlash">TOR!</div>
 <canvas id="confetti"></canvas>
-<div class="file-overlay" id="fileOverlay">📥 Datei loslassen, um Fragen zu importieren</div>
+<div class="file-overlay" id="fileOverlay" data-i18n="fileOverlay">📥 Datei loslassen, um Fragen zu importieren</div>
 
 <!-- KaTeX für Formeldarstellung ($…$ inline, $$…$$ abgesetzt). Fällt das CDN aus, bleibt der Rohtext lesbar. -->
 <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
@@ -619,9 +624,148 @@ A: 56
     view === "lehrer" ? "view-lehrer" : "view-launcher"
   );
 
-  const KI_PROMPT = "Extrahiere alle Übungsaufgaben und deren Lösungen aus diesem PDF. Formatiere die Ausgabe exakt so: Für jede Aufgabe eine Zeile 'F: <Frage>', eine Zeile 'A: <Antwort>', dann eine Zeile mit nur '---' als Trennzeichen. Mathematische Formeln als LaTeX in Dollarzeichen schreiben ($...$ für inline, $$...$$ für abgesetzt). Keine zusätzlichen Erklärungen oder Nummerierungen. Gib das Ergebnis als reinen Text aus, den ich als .txt-Datei speichern kann.";
+  // ---------- Sprache (DE/EN) ----------
+  const I18N = {
+    de: {
+      intro: 'Öffne die <b>Beamer-Ansicht</b> im Vollbild auf dem Projektor und die <b>Lehrer-Ansicht</b> auf deinem Laptop. Beide Fenster synchronisieren sich automatisch.',
+      beamerCardTitle: 'Beamer-Ansicht',
+      beamerCardText: 'Für die Klasse. Spielfeld, Punkte, Frage — ohne Lösung. Öffnet als eigenes Fenster.',
+      teacherCardTitle: 'Lehrer-Ansicht',
+      teacherCardText: 'Steuerung, Aufgabenverwaltung und die Lösung.',
+      importHow: "📄 Aufgaben aus einem PDF importieren — so geht's",
+      steps: '<li>Öffne dein Aufgabenblatt (PDF) in einem KI-Tool wie <b>Claude</b> oder <b>ChatGPT</b>.</li><li>Kopiere den Prompt unten und füge ihn zusammen mit dem PDF ein.</li><li>Die KI liefert dir alle Aufgaben im Format <code>F:</code> / <code>A:</code> / <code>---</code>.</li><li>Kopiere diese Ausgabe und füge sie in der <b>Lehrer-Ansicht</b> unter „Import" ein — die Aufgaben werden automatisch angehängt.</li>',
+      kiPrompt: "Extrahiere alle Übungsaufgaben und deren Lösungen aus diesem PDF. Formatiere die Ausgabe exakt so: Für jede Aufgabe eine Zeile 'F: <Frage>', eine Zeile 'A: <Antwort>', dann eine Zeile mit nur '---' als Trennzeichen. Mathematische Formeln als LaTeX in Dollarzeichen schreiben ($...$ für inline, $$...$$ für abgesetzt). Keine zusätzlichen Erklärungen oder Nummerierungen. Gib das Ergebnis als reinen Text aus, den ich als .txt-Datei speichern kann.",
+      copyPromptBtn: '📋 Prompt kopieren',
+      formatExample: 'F: Was ist die Hauptstadt der Schweiz?\nA: Bern\n---\nF: Wie viel ist 7 × 8?\nA: 56\n---',
+      launcherTip: 'Tipp: Für die beste Synchronisation die Datei über einen lokalen Webserver öffnen (funktioniert aber meist auch per Doppelklick).',
+      qLabel: 'Frage', aLabel: 'Lösung',
+      noQuestion: 'Noch keine Frage ausgewählt',
+      roundDone: '🏁 Runde beendet!',
+      goal: 'TOR!',
+      fileOverlay: '📥 Datei loslassen, um Fragen zu importieren',
+      move: 'Spielzug',
+      ballCenter: 'Ball in die Mitte',
+      resetScore: 'Punkte zurücksetzen',
+      resetAll: 'Alles zurücksetzen',
+      resetAllTitle: 'Punkte, Ball und Fragerunde zurücksetzen — Aufgaben bleiben erhalten',
+      kbHint: 'Tastatur: ←/→ Ball · ⌘→ weiter (Frage/Antwort) · ⌘← Frage zurück · L Lösung',
+      currentQuestion: 'Aktuelle Frage',
+      btnStart: '▶ Spiel starten', btnReveal: '👁 Antwort aufdecken', btnNext: 'Nächste Frage ▶', btnDone: '🏁 Runde beendet',
+      resetTasks: '↺ Fragen zurücksetzen',
+      resetTasksTitle: 'Zurück zum Start — Aufgaben bleiben erhalten',
+      order: 'Reihenfolge', orderSeq: 'Der Reihe nach', orderRnd: 'Zufällig',
+      counterNone: 'Keine Aufgaben erfasst.',
+      counterDone: n => `🏁 Runde beendet — alle ${n} Fragen gespielt`,
+      counterPos: (x, y) => `Frage ${x} von ${y}`,
+      counterReady: n => `${n} Aufgaben bereit`,
+      settings: 'Einstellungen',
+      stations: 'Stationen pro Seite (1–6)',
+      language: 'Sprache',
+      name1: 'Name Team 1', name2: 'Name Team 2',
+      addTaskTitle: 'Aufgabe hinzufügen',
+      qPh: 'z. B. Was ist 7 × 8?', aPh: 'z. B. 56',
+      add: 'Hinzufügen',
+      tasks: 'Aufgaben', deleteAll: 'Alle löschen',
+      importTitle: 'Import (KI-Vorverarbeitung)',
+      importHelp: 'PDF → KI-Tool (Claude/ChatGPT) mit dem Prompt unten → Ausgabe hier einfügen.<br>Format je Aufgabe: <code>F: Frage</code> · <code>A: Antwort</code> · <code>---</code><br>Formeln als LaTeX: <code>$…$</code> bzw. <code>$$…$$</code>',
+      copyKiPrompt: '📋 KI-Prompt kopieren',
+      dropHere: '📥 <b>Datei hierher ziehen</b><br><small>oder klicken zum Auswählen (.txt im F:/A:/---‑Format)</small>',
+      orPaste: '… oder Text direkt einfügen',
+      importPh: 'F: ...\nA: ...\n---',
+      importBtn: 'Einfügen & anhängen',
+      confirmScore: 'Punktestand beider Teams auf 0 setzen?',
+      confirmAll: 'Alles zurücksetzen? Punkte, Ball und Fragerunde starten neu — die Aufgaben bleiben erhalten.',
+      confirmClear: 'Wirklich ALLE Aufgaben löschen?',
+      editQ: 'Frage:', editA: 'Lösung:',
+      copied: '✓ Kopiert!', copyFallback: 'Prompt kopieren:',
+      addedN: n => `✓ ${n} hinzugefügt`,
+      nothing: 'Nichts erkannt',
+      importedN: n => `✓ ${n} Aufgabe${n === 1 ? '' : 'n'} importiert`,
+      importNone: 'In der/den Datei(en) nichts im F:/A:/---‑Format erkannt.',
+      useTitle: 'Als aktuelle Frage', editTitle: 'Bearbeiten', delTitle: 'Löschen'
+    },
+    en: {
+      intro: 'Open the <b>projector view</b> in fullscreen on the projector and the <b>teacher view</b> on your laptop. Both windows sync automatically.',
+      beamerCardTitle: 'Projector view',
+      beamerCardText: 'For the class. Field, score, question — never the answer. Opens as its own window.',
+      teacherCardTitle: 'Teacher view',
+      teacherCardText: 'Controls, task management, and the answers.',
+      importHow: "📄 Import tasks from a PDF — here's how",
+      steps: '<li>Open your worksheet (PDF) in an AI tool like <b>Claude</b> or <b>ChatGPT</b>.</li><li>Copy the prompt below and paste it together with the PDF.</li><li>The AI returns all tasks in the format <code>Q:</code> / <code>A:</code> / <code>---</code>.</li><li>Copy that output and paste it into the <b>teacher view</b> under "Import" — the tasks are appended automatically.</li>',
+      kiPrompt: "Extract all exercises and their solutions from this PDF. Format the output exactly like this: for each task one line 'Q: <question>', one line 'A: <answer>', then a line containing only '---' as separator. Write mathematical formulas as LaTeX in dollar signs ($...$ inline, $$...$$ display). No additional explanations or numbering. Return plain text that I can save as a .txt file.",
+      copyPromptBtn: '📋 Copy prompt',
+      formatExample: 'Q: What is the capital of Switzerland?\nA: Bern\n---\nQ: What is 7 × 8?\nA: 56\n---',
+      launcherTip: 'Tip: for the most reliable sync, serve the file from a local web server (usually double-clicking works too).',
+      qLabel: 'Question', aLabel: 'Answer',
+      noQuestion: 'No question selected yet',
+      roundDone: '🏁 Round finished!',
+      goal: 'GOAL!',
+      fileOverlay: '📥 Drop the file to import questions',
+      move: 'Move',
+      ballCenter: 'Ball to the middle',
+      resetScore: 'Reset score',
+      resetAll: 'Reset everything',
+      resetAllTitle: 'Resets score, ball and round — tasks are kept',
+      kbHint: 'Keyboard: ←/→ ball · ⌘→ next (question/answer) · ⌘← previous question · L answer',
+      currentQuestion: 'Current question',
+      btnStart: '▶ Start game', btnReveal: '👁 Reveal answer', btnNext: 'Next question ▶', btnDone: '🏁 Round finished',
+      resetTasks: '↺ Reset questions',
+      resetTasksTitle: 'Back to the start — tasks are kept',
+      order: 'Order', orderSeq: 'In order', orderRnd: 'Random',
+      counterNone: 'No tasks yet.',
+      counterDone: n => `🏁 Round finished — all ${n} questions played`,
+      counterPos: (x, y) => `Question ${x} of ${y}`,
+      counterReady: n => `${n} tasks ready`,
+      settings: 'Settings',
+      stations: 'Stations per side (1–6)',
+      language: 'Language',
+      name1: 'Team 1 name', name2: 'Team 2 name',
+      addTaskTitle: 'Add a task',
+      qPh: 'e.g. What is 7 × 8?', aPh: 'e.g. 56',
+      add: 'Add',
+      tasks: 'Tasks', deleteAll: 'Delete all',
+      importTitle: 'Import (AI pre-processing)',
+      importHelp: 'PDF → AI tool (Claude/ChatGPT) with the prompt below → paste the output here.<br>Format per task: <code>Q: question</code> · <code>A: answer</code> · <code>---</code><br>Formulas as LaTeX: <code>$…$</code> or <code>$$…$$</code>',
+      copyKiPrompt: '📋 Copy AI prompt',
+      dropHere: '📥 <b>Drag a file here</b><br><small>or click to choose (.txt in Q:/A:/--- format)</small>',
+      orPaste: '… or paste text directly',
+      importPh: 'Q: ...\nA: ...\n---',
+      importBtn: 'Parse & append',
+      confirmScore: 'Reset both team scores to 0?',
+      confirmAll: 'Reset everything? Score, ball and round start fresh — tasks are kept.',
+      confirmClear: 'Really delete ALL tasks?',
+      editQ: 'Question:', editA: 'Answer:',
+      copied: '✓ Copied!', copyFallback: 'Copy prompt:',
+      addedN: n => `✓ ${n} added`,
+      nothing: 'Nothing recognized',
+      importedN: n => `✓ ${n} task${n === 1 ? '' : 's'} imported`,
+      importNone: 'No Q:/A:/--- format found in the file(s).',
+      useTitle: 'Set as current question', editTitle: 'Edit', delTitle: 'Delete'
+    }
+  };
+
+  let currentLang = "de";
+  function tr(key, ...args) {
+    const dict = I18N[currentLang] || I18N.de;
+    const v = dict[key] !== undefined ? dict[key] : I18N.de[key];
+    return typeof v === "function" ? v(...args) : v;
+  }
+  function applyTranslations() {
+    document.querySelectorAll("[data-i18n]").forEach(el => { el.textContent = tr(el.dataset.i18n); });
+    document.querySelectorAll("[data-i18n-html]").forEach(el => { el.innerHTML = tr(el.dataset.i18nHtml); });
+    document.querySelectorAll("[data-i18n-ph]").forEach(el => { el.placeholder = tr(el.dataset.i18nPh); });
+    document.querySelectorAll("[data-i18n-title]").forEach(el => { el.title = tr(el.dataset.i18nTitle); });
+    document.documentElement.lang = currentLang;
+  }
+  function storedLang() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY))?.lang === "en" ? "en" : "de"; }
+    catch { return "de"; }
+  }
 
   if (view !== "beamer" && view !== "lehrer") {
+    currentLang = storedLang();
+    applyTranslations();
+
     // Launcher: Beamer-Ansicht als eigenes Fenster öffnen (statt neuem Tab)
     const beamerCard = document.getElementById("cardBeamer");
     if (beamerCard) beamerCard.addEventListener("click", (e) => {
@@ -639,9 +783,9 @@ A: 56
     // Launcher: Copy-Button aktivieren
     const btn = document.getElementById("launchCopyPrompt");
     if (btn) btn.onclick = async () => {
-      try { await navigator.clipboard.writeText(KI_PROMPT); }
-      catch { prompt("Prompt kopieren:", KI_PROMPT); return; }
-      const old = btn.textContent; btn.textContent = "✓ Kopiert!";
+      try { await navigator.clipboard.writeText(tr("kiPrompt")); }
+      catch { prompt(tr("copyFallback"), tr("kiPrompt")); return; }
+      const old = btn.textContent; btn.textContent = tr("copied");
       setTimeout(() => { btn.textContent = old; }, 1400);
     };
     return; // keine Spiellogik nötig
@@ -662,6 +806,7 @@ A: 56
     finished: false,         // Runde beendet (alle Fragen durch)?
     revealed: false,         // Lösung für die Klasse aufgedeckt?
     order: "sequential",     // "sequential" | "random"
+    lang: "de",              // UI-Sprache (de/en), synchronisiert beide Fenster
     seqPointer: -1,
     rev: 0                   // Änderungszähler zur Konfliktvermeidung
   });
@@ -681,6 +826,7 @@ A: 56
       s.scores = Array.isArray(s.scores)
         ? [Math.max(0, s.scores[0] | 0), Math.max(0, s.scores[1] | 0)] : [0, 0];
       if (s.order !== "random") s.order = "sequential";
+      s.lang = s.lang === "en" ? "en" : "de";
       s.revealed = s.revealed === true;
       s.finished = s.finished === true;
       if (!Array.isArray(s.history)) s.history = [];
@@ -807,8 +953,16 @@ A: 56
   let lastScores = state.scores.slice(); // zur Tor-Erkennung (feiert in Lehrer- UND Beamer-Fenster)
   let lastRenderedQ = null, lastRenderedA = null; // KaTeX nur bei Textänderung neu rendern
   let lastTaskListSig = null; // Aufgabenliste nur bei Änderung neu bauen
+  let lastLang = null; // Sprachwechsel erkennen
 
   function render() {
+    // Sprache anwenden (beim Start und bei Wechsel; synchronisiert auch den Beamer)
+    if (lastLang !== state.lang) {
+      currentLang = state.lang;
+      applyTranslations();
+      lastRenderedQ = lastRenderedA = null; // sprachabhängige Texte neu rendern
+      lastLang = state.lang;
+    }
     // Scoreboard
     document.getElementById("badge1").textContent = state.teams[0];
     document.getElementById("badge2").textContent = state.teams[1];
@@ -829,8 +983,8 @@ A: 56
     const qKey = task ? task.id + "" + task.q : (state.finished ? "finished" : "");
     if (qKey !== lastRenderedQ) {
       if (task) qEl.textContent = task.q;
-      else if (state.finished) qEl.textContent = "🏁 Runde beendet!";
-      else qEl.innerHTML = '<span class="empty-hint">Noch keine Frage ausgewählt</span>';
+      else if (state.finished) qEl.textContent = tr("roundDone");
+      else qEl.innerHTML = '<span class="empty-hint">' + tr("noQuestion") + '</span>';
       renderMath(qEl);
       lastRenderedQ = qKey;
     }
@@ -865,18 +1019,25 @@ A: 56
     setIfNotFocused("name1", state.teams[0]);
     setIfNotFocused("name2", state.teams[1]);
 
-    // Order toggle
+    // Team-Buttons zeigen die aktuellen Teamnamen
+    document.getElementById("moveT1").textContent = "◀ " + state.teams[0];
+    document.getElementById("moveT2").textContent = state.teams[1] + " ▶";
+
+    // Order- und Sprach-Toggle
     document.querySelectorAll("#orderToggle button").forEach(b => {
       b.classList.toggle("active", b.dataset.order === state.order);
+    });
+    document.querySelectorAll("#langToggle button").forEach(b => {
+      b.classList.toggle("active", b.dataset.lang === state.lang);
     });
 
     // Ein Button führt durchs Spiel: Starten -> Antwort aufdecken -> Nächste Frage -> ... -> Runde beendet
     const nextBtn = document.getElementById("nextTask");
     const started = state.currentTaskId !== null;
-    nextBtn.textContent = state.finished ? "🏁 Runde beendet"
-      : !started ? "▶ Spiel starten"
-      : !state.revealed ? "👁 Antwort aufdecken"
-      : "Nächste Frage ▶";
+    nextBtn.textContent = state.finished ? tr("btnDone")
+      : !started ? tr("btnStart")
+      : !state.revealed ? tr("btnReveal")
+      : tr("btnNext");
     nextBtn.classList.toggle("start-mode", !started && !state.finished);
     nextBtn.disabled = state.tasks.length === 0 || state.finished;
 
@@ -902,9 +1063,9 @@ A: 56
             <div class="task-a">${escapeHtml(t.a)}</div>
           </div>
           <div class="task-actions">
-            <button data-act="use" title="Als aktuelle Frage">▶</button>
-            <button data-act="edit" title="Bearbeiten">✎</button>
-            <button data-act="del" title="Löschen">🗑</button>
+            <button data-act="use" title="${tr("useTitle")}">▶</button>
+            <button data-act="edit" title="${tr("editTitle")}">✎</button>
+            <button data-act="del" title="${tr("delTitle")}">🗑</button>
           </div>`;
         list.appendChild(item);
       });
@@ -914,13 +1075,13 @@ A: 56
     // Counter
     const counter = document.getElementById("taskCounter");
     if (state.tasks.length === 0) {
-      counter.textContent = "Keine Aufgaben erfasst.";
+      counter.textContent = tr("counterNone");
     } else if (state.finished) {
-      counter.textContent = `🏁 Runde beendet — alle ${state.tasks.length} Fragen gespielt`;
+      counter.textContent = tr("counterDone", state.tasks.length);
     } else if (state.currentTaskId !== null) {
-      counter.textContent = `Frage ${state.asked.length} von ${state.tasks.length}`;
+      counter.textContent = tr("counterPos", state.asked.length, state.tasks.length);
     } else {
-      counter.textContent = `${state.tasks.length} Aufgaben bereit`;
+      counter.textContent = tr("counterReady", state.tasks.length);
     }
   }
 
@@ -1059,7 +1220,7 @@ A: 56
   // ---------- Celebration ----------
   function celebrate(team) {
     const flash = document.getElementById("goalFlash");
-    flash.textContent = "TOR! " + state.teams[team];
+    flash.textContent = tr("goal") + " " + state.teams[team];
     flash.style.color = team === 0 ? "#93c5fd" : "#fca5a5";
     flash.classList.add("show");
     setTimeout(() => flash.classList.remove("show"), 1400);
@@ -1112,10 +1273,10 @@ A: 56
     document.getElementById("moveT2").onclick = () => moveBall(-1); // Team2 -> links
     document.getElementById("resetBall").onclick = () => { state.ball = 0; persistAndSync(); };
     document.getElementById("resetScore").onclick = () => {
-      if (confirm("Punktestand beider Teams auf 0 setzen?")) { state.scores = [0,0]; persistAndSync(); }
+      if (confirm(tr("confirmScore"))) { state.scores = [0,0]; persistAndSync(); }
     };
     document.getElementById("resetAll").onclick = () => {
-      if (!confirm("Alles zurücksetzen? Punkte, Ball und Fragerunde starten neu — die Aufgaben bleiben erhalten.")) return;
+      if (!confirm(tr("confirmAll"))) return;
       state.scores = [0, 0];
       state.ball = 0;
       state.currentTaskId = null;
@@ -1140,6 +1301,9 @@ A: 56
 
     document.querySelectorAll("#orderToggle button").forEach(b => {
       b.onclick = () => { state.order = b.dataset.order; persistAndSync(); };
+    });
+    document.querySelectorAll("#langToggle button").forEach(b => {
+      b.onclick = () => { state.lang = b.dataset.lang === "en" ? "en" : "de"; persistAndSync(); };
     });
 
     // Stationen
@@ -1175,7 +1339,7 @@ A: 56
     document.getElementById("newA").addEventListener("keydown", e => { if (e.key === "Enter") addTask(); });
 
     document.getElementById("clearTasks").onclick = () => {
-      if (state.tasks.length && confirm("Wirklich ALLE Aufgaben löschen?")) {
+      if (state.tasks.length && confirm(tr("confirmClear"))) {
         state.tasks = []; state.currentTaskId = null; state.seqPointer = -1; persistAndSync();
       }
     };
@@ -1201,8 +1365,8 @@ A: 56
         persistAndSync();
       } else if (act === "edit") {
         const t = state.tasks.find(t => t.id === id);
-        const q = prompt("Frage:", t.q); if (q === null) return;
-        const a = prompt("Lösung:", t.a); if (a === null) return;
+        const q = prompt(tr("editQ"), t.q); if (q === null) return;
+        const a = prompt(tr("editA"), t.a); if (a === null) return;
         t.q = q.trim() || t.q; // leere Eingabe soll die Frage nicht löschen
         t.a = a.trim();
         persistAndSync();
@@ -1251,18 +1415,18 @@ A: 56
 
     // Import
     document.getElementById("copyPrompt").onclick = async () => {
-      try { await navigator.clipboard.writeText(KI_PROMPT); toastBtn("copyPrompt", "✓ Kopiert!"); }
-      catch { prompt("Prompt kopieren:", KI_PROMPT); }
+      try { await navigator.clipboard.writeText(tr("kiPrompt")); toastBtn("copyPrompt", tr("copied")); }
+      catch { prompt(tr("copyFallback"), tr("kiPrompt")); }
     };
     document.getElementById("importBtn").onclick = () => {
       const text = document.getElementById("importText").value;
       const added = parseImport(text);
       if (added > 0) {
         document.getElementById("importText").value = "";
-        toastBtn("importBtn", `✓ ${added} hinzugefügt`);
+        toastBtn("importBtn", tr("addedN", added));
         persistAndSync();
       } else {
-        toastBtn("importBtn", "Nichts erkannt");
+        toastBtn("importBtn", tr("nothing"));
       }
     };
 
@@ -1288,9 +1452,7 @@ A: 56
       function done() {
         if (--pending > 0) return;
         if (added > 0) persistAndSync();
-        setDropStatus(added > 0
-          ? `✓ ${added} Aufgabe${added === 1 ? "" : "n"} importiert`
-          : "In der/den Datei(en) nichts im F:/A:/---‑Format erkannt.");
+        setDropStatus(added > 0 ? tr("importedN", added) : tr("importNone"));
       }
     }
     function setDropStatus(msg) {
@@ -1331,7 +1493,7 @@ A: 56
         const lines = block.split(/\r?\n/);
         let q = null, a = null, mode = null;
         lines.forEach(line => {
-          const mF = line.match(/^\s*F\s*:\s*(.*)$/i);
+          const mF = line.match(/^\s*[FQ]\s*:\s*(.*)$/i);
           const mA = line.match(/^\s*A\s*:\s*(.*)$/i);
           if (mF) { if (q !== null) { pushTask(q, a); a = null; } q = mF[1]; mode = "q"; }
           else if (mA) { a = mA[1]; mode = "a"; }
