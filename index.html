@@ -9,6 +9,7 @@
   :root {
     --team1: #2563eb;
     --team2: #dc2626;
+    --answer: #cf3c3c; /* aufgehelltes Firebrick, lesbar auf dunklem Grund */
     --field: #4ade80;
     --field-dark: #22c55e;
     --line: rgba(255,255,255,.75);
@@ -278,25 +279,24 @@
   body.view-beamer .question { font-size: clamp(28px, 4.5vw, 60px); }
   body.view-lehrer .question { font-size: 24px; }
   .question, #answerText { white-space: pre-line; } /* mehrzeilige Aufgaben sauber umbrechen */
+  /* Aufgedeckte Antwort: in Firebrick direkt hinter der Frage auf derselben Zeile */
+  .answer-inline { display: none; color: var(--answer); margin-left: .45em; }
+  .answer-inline.show { display: inline; }
+  /* Lehrer-Box: Lösung immer sichtbar (vor dem Aufdecken) */
   .answer {
     display: none;
     margin-top: 14px;
     padding: 14px 20px;
-    background: rgba(22,163,74,.1);
-    border: 1px solid #16a34a;
+    background: rgba(207,60,60,.08);
+    border: 1px solid rgba(207,60,60,.5);
     border-radius: 12px;
-    color: #86efac;
+    color: var(--answer);
     font-weight: 800;
     font-size: 28px;
     line-height: 1.3;
   }
   body.view-lehrer .answer { display: block; }
-  /* Beamer: Box ist immer im Layout (sonst springt beim Aufdecken alles), nur unsichtbar */
-  body.view-beamer .answer { display: block; visibility: hidden; font-size: clamp(24px, 3.6vw, 52px); }
-  body.view-beamer .answer.revealed { visibility: visible; }
-  body.view-lehrer .answer.revealed { box-shadow: 0 0 0 2px #16a34a; }
-  body.view-lehrer .answer.revealed .a-label::after { content: " — für die Klasse aufgedeckt"; }
-  .answer .a-label { color: #4ade80; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; display: block; margin-bottom: 4px; }
+  .answer .a-label { color: #e08a84; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; display: block; margin-bottom: 4px; }
   .empty-hint { color: var(--muted); font-style: italic; }
 
   /* ---------- Controls (Lehrer) ---------- */
@@ -484,7 +484,7 @@ A: 56
 
   <section class="question-area">
     <div class="q-label">Frage</div>
-    <div class="question" id="questionText"><span class="empty-hint">Noch keine Frage ausgewählt</span></div>
+    <div class="question"><span id="questionText"><span class="empty-hint">Noch keine Frage ausgewählt</span></span><span class="answer-inline" id="answerInline"></span></div>
     <div class="answer" id="answerBox">
       <span class="a-label">Lösung</span>
       <span id="answerText"></span>
@@ -818,9 +818,14 @@ A: 56
     if (aKey !== lastRenderedA) {
       aEl.textContent = task ? task.a : "—";
       renderMath(aEl);
+      // Inline-Variante hinter der Frage: "= Antwort" (kein doppeltes "=", falls schon vorhanden)
+      const raw = task ? task.a.trim() : "";
+      const aiEl = document.getElementById("answerInline");
+      aiEl.textContent = raw ? (raw.startsWith("=") ? raw : "= " + raw) : "";
+      renderMath(aiEl);
       lastRenderedA = aKey;
     }
-    document.getElementById("answerBox").classList.toggle("revealed", state.revealed && !!task);
+    document.getElementById("answerInline").classList.toggle("show", state.revealed && !!task);
     if (isTeacher) renderControls();
     celebrateIfGoal();
   }
