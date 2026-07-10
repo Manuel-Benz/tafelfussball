@@ -239,12 +239,17 @@
     z-index: 2;
   }
   .cell .marker {
+    position: absolute;
+    left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
     width: 16%;
     min-width: 8px;
     aspect-ratio: 1;
     border-radius: 50%;
     background: rgba(255,255,255,.22);
   }
+  .cell.up .marker { top: 27%; }   /* Zickzack: Station nach oben versetzt */
+  .cell.down .marker { top: 73%; } /* ... nach unten versetzt */
   .cell.center .marker { background: rgba(255,255,255,.35); }
   .ball {
     position: absolute;
@@ -254,7 +259,7 @@
     width: 7vmin;
     height: 7vmin;
     z-index: 5;
-    transition: left .45s cubic-bezier(.34,1.4,.5,1);
+    transition: left .45s cubic-bezier(.34,1.4,.5,1), top .45s cubic-bezier(.34,1.4,.5,1);
     pointer-events: none;
   }
   .ball svg { display: block; width: 100%; height: 100%; }
@@ -495,7 +500,7 @@ A: 56
         <button class="ghost" id="resetBall">Ball → Mitte</button>
         <button class="ghost danger" id="resetScore">Punkte → 0</button>
       </div>
-      <div class="counter" style="margin-top:8px">Tastatur: ← / → bewegt den Ball</div>
+      <div class="counter" style="margin-top:8px">Tastatur: ←/→ Ball · ⌘←/⌘→ Frage zurück/vor · L Lösung</div>
     </div>
 
     <div class="panel">
@@ -634,6 +639,7 @@ A: 56
     ball: 0,                 // -stations .. +stations (0 = Mitte). + = Richtung Team2-Tor
     tasks: [],               // {id, q, a}
     currentTaskId: null,
+    history: [],             // gezeigte Task-IDs, für "Frage zurück" (auch im Zufallsmodus)
     revealed: false,         // Lösung für die Klasse aufgedeckt?
     order: "sequential",     // "sequential" | "random"
     seqPointer: -1,
@@ -656,6 +662,7 @@ A: 56
         ? [Math.max(0, s.scores[0] | 0), Math.max(0, s.scores[1] | 0)] : [0, 0];
       if (s.order !== "random") s.order = "sequential";
       s.revealed = s.revealed === true;
+      if (!Array.isArray(s.history)) s.history = [];
       return s;
     } catch { return null; }
   }
@@ -705,7 +712,14 @@ A: 56
     let html = '<div class="goal left"><div class="net"></div></div><div class="lane">';
     for (let i = 0; i < cells; i++) {
       const isCenter = i === n;
-      html += `<div class="cell${isCenter ? " center" : ""}"><div class="marker"></div></div>`;
+      // Zickzack, gespiegelt: vom eigenen Tor aus gerade / hoch / runter (zyklisch)
+      let cls = "";
+      if (!isCenter) {
+        const distFromGoal = i < n ? i : cells - 1 - i;
+        const cycle = distFromGoal % 3; // 0: gerade, 1: hoch, 2: runter
+        cls = cycle === 1 ? " up" : cycle === 2 ? " down" : "";
+      }
+      html += `<div class="cell${isCenter ? " center" : ""}${cls}"><div class="marker"></div></div>`;
     }
     html += '</div><div class="goal right"><div class="net"></div></div>';
     // Flacher 2D-Ball (SVG statt Emoji: keine Glanz-/Schatteneffekte)
@@ -728,21 +742,25 @@ A: 56
       target = fieldEl.querySelector(".goal.left .net");   // Ball im linken Tor
     } else {
       const cellsEls = fieldEl.querySelectorAll(".lane .cell");
-      target = cellsEls[state.ball + n];                   // Station 0 .. 2n
+      const cell = cellsEls[state.ball + n];               // Station 0 .. 2n
+      target = cell && cell.querySelector(".marker");      // Marker (folgt dem Zickzack-Versatz)
     }
     if (!target) return;
     const fieldRect = fieldEl.getBoundingClientRect();
     const cRect = target.getBoundingClientRect();
     const left = (cRect.left - fieldRect.left) + cRect.width / 2;
+    const top = (cRect.top - fieldRect.top) + cRect.height / 2;
     if (needsInstantPosition) {
       // Erstplatzierung / nach Stationswechsel: ohne Einflug-Animation setzen.
       ballEl.style.transition = "none";
       ballEl.style.left = left + "px";
+      ballEl.style.top = top + "px";
       void ballEl.offsetWidth; // Reflow erzwingen
       ballEl.style.transition = "";
       needsInstantPosition = false;
     } else {
       ballEl.style.left = left + "px";
+      ballEl.style.top = top + "px";
     }
   }
 
@@ -932,6 +950,33 @@ A: 56
       state.seqPointer = (state.seqPointer + 1) % state.tasks.length;
       state.currentTaskId = state.tasks[state.seqPointer].id;
     }
+    pushHistory(state.currentTaskId);
+    persistAndSync();
+  }
+
+  function pushHistory(id) {
+    state.history.push(id);
+    if (state.history.length > 300) state.history.shift();
+  }
+
+  function prevTask() {
+    // Zurück zur zuvor gezeigten Frage (Verlauf; überspringt gelöschte Aufgaben)
+    const h = state.history;
+    const poppedCurrent = h[h.length - 1] === state.currentTaskId ? h.pop() : null;
+    let id, idx = -1;
+    while (h.length) {
+      id = h[h.length - 1];
+      idx = state.tasks.findIndex(t => t.id === id);
+      if (idx !== -1) break;
+      h.pop(); // gelöschte Aufgabe -> weiter zurück
+    }
+    if (idx === -1) {
+      if (poppedCurrent) h.push(poppedCurrent); // nichts zum Zurückgehen -> Verlauf unverändert
+      return;
+    }
+    state.currentTaskId = id;
+    state.seqPointer = idx;
+    state.revealed = false;
     persistAndSync();
   }
 
@@ -1002,17 +1047,28 @@ A: 56
       // Runde neu starten: Aufgaben bleiben, nur Auswahl/Reihenfolge zurück auf Anfang
       state.currentTaskId = null;
       state.seqPointer = -1;
+      state.history = [];
       state.revealed = false;
       persistAndSync();
     };
 
-    // Pfeiltasten: ← Ball nach links, → nach rechts (nicht beim Tippen in Feldern)
+    // Tastatur: ←/→ Ball · ⌘/Strg+→ nächste Frage · ⌘/Strg+← Frage zurück · L Lösung
     window.addEventListener("keydown", (e) => {
-      if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
       const t = e.target;
       if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.isContentEditable)) return;
-      e.preventDefault();
-      moveBall(e.key === "ArrowRight" ? 1 : -1);
+      const mod = e.metaKey || e.ctrlKey;
+      if (e.key === "ArrowRight") {
+        e.preventDefault();
+        mod ? nextTask() : moveBall(1);
+      } else if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        mod ? prevTask() : moveBall(-1);
+      } else if ((e.key === "l" || e.key === "L") && !mod) {
+        if (state.currentTaskId === null) return;
+        e.preventDefault();
+        state.revealed = !state.revealed;
+        persistAndSync();
+      }
     });
 
     document.querySelectorAll("#orderToggle button").forEach(b => {
@@ -1068,6 +1124,7 @@ A: 56
         state.currentTaskId = id;
         state.seqPointer = state.tasks.findIndex(t => t.id === id);
         state.revealed = false;
+        pushHistory(id);
         persistAndSync();
       } else if (act === "del") {
         state.tasks = state.tasks.filter(t => t.id !== id);

@@ -21,6 +21,8 @@ Beide Fenster synchronisieren sich live über `BroadcastChannel`, mit `localStor
 
 - **▶ Spiel starten / Nächste Frage** — zeigt die erste bzw. nächste Frage (sequenziell oder zufällig).
 - **◀ Team 1 / Team 2 ▶** oder **Pfeiltasten ← / →** — bewegen den Ball. Hinter der letzten Station fällt er ins Tor: Punkt, Jubel, zurück zur Mitte.
+- **⌘/Strg + → / ←** — nächste Frage / Frage zurück (Verlauf, funktioniert auch im Zufallsmodus).
+- **L** — Lösung auf-/verdecken.
 - **👁 Lösung aufdecken** — zeigt die Lösung auch auf dem Beamer (bei „Nächste Frage" automatisch wieder versteckt).
 - **↺ Fragen zurücksetzen** — startet die Runde neu (Aufgaben bleiben erhalten); „Punkte → 0" und „Ball → Mitte" setzen den Spielstand separat zurück.
 
