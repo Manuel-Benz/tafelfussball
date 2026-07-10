@@ -70,7 +70,15 @@
     padding: 40px 24px;
     text-align: center;
   }
-  #launcher h1 { font-size: clamp(32px, 6vw, 64px); margin: 0; }
+  #launcher h1 {
+    font-size: clamp(32px, 6vw, 64px);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: .35em;
+  }
+  .logo-ball { display: inline-block; width: .95em; height: .95em; }
+  .logo-ball svg { display: block; width: 100%; height: 100%; }
   #launcher p { color: var(--muted); max-width: 640px; margin: 0; line-height: 1.5; }
   .launch-cards { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; }
   .launch-card {
@@ -85,8 +93,7 @@
     transition: transform .12s, border-color .12s;
   }
   .launch-card:hover { transform: translateY(-3px); border-color: #60a5fa; }
-  .launch-card .emoji { font-size: 48px; }
-  .launch-card h2 { margin: 12px 0 6px; font-size: 24px; }
+  .launch-card h2 { margin: 0 0 8px; font-size: 24px; }
   .launch-card p { font-size: 14px; }
 
   /* Launcher: Import-Infobox */
@@ -445,16 +452,14 @@
 <!-- ============ Launcher ============ -->
 <div id="launcher">
   <div class="launcher-inner">
-  <h1>⚽ Tafelfussball</h1>
+  <h1><span class="logo-ball" id="logoBall"></span> Tafelfussball</h1>
   <p data-i18n-html="intro">Öffne die <b>Beamer-Ansicht</b> im Vollbild auf dem Projektor und die <b>Lehrer-Ansicht</b> auf deinem Laptop. Beide Fenster synchronisieren sich automatisch.</p>
   <div class="launch-cards">
     <a class="launch-card" id="cardBeamer" href="?view=beamer" target="_blank" rel="noopener">
-      <div class="emoji">📺</div>
       <h2 data-i18n="beamerCardTitle">Beamer-Ansicht</h2>
       <p data-i18n="beamerCardText">Für die Klasse. Spielfeld, Punkte, Frage — ohne Lösung. Öffnet als eigenes Fenster.</p>
     </a>
     <a class="launch-card" href="?view=lehrer" target="_blank" rel="noopener">
-      <div class="emoji">🎛️</div>
       <h2 data-i18n="teacherCardTitle">Lehrer-Ansicht</h2>
       <p data-i18n="teacherCardText">Steuerung, Aufgabenverwaltung und die Lösung.</p>
     </a>
@@ -791,10 +796,18 @@ A: 56
     catch { return "auto"; }
   }
 
+  // Favicon: derselbe flache Ball wie im Spiel (ballSvg ist gehoisted)
+  const favicon = document.createElement("link");
+  favicon.rel = "icon";
+  favicon.type = "image/svg+xml";
+  favicon.href = "data:image/svg+xml;utf8," + encodeURIComponent(ballSvg());
+  document.head.appendChild(favicon);
+
   if (view !== "beamer" && view !== "lehrer") {
     currentLang = storedLang();
     applyTranslations();
     applyTheme(storedTheme());
+    document.getElementById("logoBall").innerHTML = ballSvg();
 
     // Launcher: Beamer-Ansicht als eigenes Fenster öffnen (statt neuem Tab)
     const beamerCard = document.getElementById("cardBeamer");
