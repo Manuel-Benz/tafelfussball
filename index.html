@@ -130,8 +130,13 @@
   body.view-lehrer #app { display: grid; }
 
   body.view-beamer #app {
+    grid-template-columns: 1fr;
     grid-template-rows: auto 1fr auto;
-    padding: 2vmin 3vmin;
+    grid-template-areas:
+      "score"
+      "field"
+      "question";
+    padding: 2.5vmin 3vmin;
     gap: 2vmin;
   }
   body.view-lehrer #app {
@@ -322,6 +327,8 @@
   button.danger { background: #7f1d1d; }
   button.big { padding: 16px; font-size: 18px; }
   button.icon { padding: 6px 10px; }
+  button.start-mode { background: #16a34a; font-size: 20px; padding: 16px; }
+  button:disabled { opacity: .45; cursor: not-allowed; filter: none; }
 
   input, textarea, select {
     font: inherit;
@@ -495,7 +502,7 @@ A: 56
     <div class="panel">
       <h3>Aktuelle Frage</h3>
       <div class="row grow">
-        <button class="primary" id="nextTask">Nächste Frage ▶</button>
+        <button class="primary start-mode" id="nextTask">▶ Spiel starten</button>
       </div>
       <label class="field-label">Reihenfolge</label>
       <div class="toggle-group" id="orderToggle">
@@ -709,11 +716,21 @@ A: 56
     const fieldRect = fieldEl.getBoundingClientRect();
     const cRect = target.getBoundingClientRect();
     const left = (cRect.left - fieldRect.left) + cRect.width / 2;
-    ballEl.style.left = left + "px";
+    if (needsInstantPosition) {
+      // Erstplatzierung / nach Stationswechsel: ohne Einflug-Animation setzen.
+      ballEl.style.transition = "none";
+      ballEl.style.left = left + "px";
+      void ballEl.offsetWidth; // Reflow erzwingen
+      ballEl.style.transition = "";
+      needsInstantPosition = false;
+    } else {
+      ballEl.style.left = left + "px";
+    }
   }
 
   // ---------- Render ----------
   let lastStations = null;
+  let needsInstantPosition = true; // Ball beim ersten Mal / nach Stationswechsel ohne Animation setzen
   let lastScores = state.scores.slice(); // zur Tor-Erkennung (feiert in Lehrer- UND Beamer-Fenster)
 
   function render() {
@@ -727,6 +744,7 @@ A: 56
     if (lastStations !== state.stationsPerSide) {
       buildField();
       lastStations = state.stationsPerSide;
+      needsInstantPosition = true; // neu gebautes Feld -> Ball direkt platzieren
     }
     requestAnimationFrame(positionBall);
 
@@ -766,6 +784,13 @@ A: 56
     document.querySelectorAll("#orderToggle button").forEach(b => {
       b.classList.toggle("active", b.dataset.order === state.order);
     });
+
+    // Start-/Nächste-Frage-Button
+    const nextBtn = document.getElementById("nextTask");
+    const started = state.currentTaskId !== null;
+    nextBtn.textContent = started ? "Nächste Frage ▶" : "▶ Spiel starten";
+    nextBtn.classList.toggle("start-mode", !started);
+    nextBtn.disabled = state.tasks.length === 0;
 
     // Task list
     const list = document.getElementById("taskList");
@@ -855,6 +880,8 @@ A: 56
 
   function nextTask() {
     if (state.tasks.length === 0) return;
+    const firstStart = state.currentTaskId === null; // "Spiel starten": Feld sauber zentrieren
+    if (firstStart) state.ball = 0;
     if (state.order === "random") {
       let idx;
       if (state.tasks.length === 1) idx = 0;
