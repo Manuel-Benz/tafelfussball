@@ -715,11 +715,10 @@ A: 56
     let html = '<div class="goal left"><div class="net"></div></div><div class="lane">';
     for (let i = 0; i < cells; i++) {
       const isCenter = i === n;
-      // Zickzack, gespiegelt: vom eigenen Tor aus gerade / hoch / runter (zyklisch)
+      // Zickzack: links vom Tor aus gerade/hoch/runter, rechts der Mitte weiter mit hoch/runter/gerade
       let cls = "";
       if (!isCenter) {
-        const distFromGoal = i < n ? i : cells - 1 - i;
-        const cycle = distFromGoal % 3; // 0: gerade, 1: hoch, 2: runter
+        const cycle = i < n ? i % 3 : [1, 2, 0][(i - n - 1) % 3]; // 0: gerade, 1: hoch, 2: runter
         cls = cycle === 1 ? " up" : cycle === 2 ? " down" : "";
       }
       html += `<div class="cell${isCenter ? " center" : ""}${cls}"><div class="marker"></div></div>`;
