@@ -370,6 +370,33 @@
   }
   .goal-flash.show { opacity: 1; animation: pop .8s ease; }
   @keyframes pop { 0%{ transform: scale(.6);} 50%{ transform: scale(1.15);} 100%{ transform: scale(1);} }
+
+  /* Datei-Import */
+  .dropzone {
+    border: 2px dashed var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 13px;
+    line-height: 1.4;
+    transition: border-color .12s, background .12s, color .12s;
+  }
+  .dropzone:hover { border-color: #60a5fa; color: var(--text); background: rgba(96,165,250,.06); }
+  .dropzone small { color: var(--muted); }
+  .drop-status { font-size: 12px; min-height: 1em; margin-top: 6px; color: #4ade80; }
+
+  .file-overlay {
+    position: fixed; inset: 0; z-index: 120;
+    display: none; align-items: center; justify-content: center;
+    background: rgba(15,23,42,.88);
+    outline: 5px dashed #60a5fa; outline-offset: -22px;
+    color: #e2e8f0; font-size: clamp(22px, 3.4vw, 40px); font-weight: 800;
+    text-align: center; padding: 24px;
+    pointer-events: none;
+  }
+  .file-overlay.show { display: flex; }
 </style>
 </head>
 <body>
@@ -513,6 +540,13 @@ A: 56
       <div class="row" style="margin:8px 0">
         <button class="ghost" id="copyPrompt">📋 KI-Prompt kopieren</button>
       </div>
+      <div class="dropzone" id="dropzone">
+        📥 <b>Datei hierher ziehen</b><br>
+        <small>oder klicken zum Auswählen (.txt im F:/A:/---‑Format)</small>
+        <input type="file" id="fileInput" accept=".txt,.md,.text,text/plain" multiple hidden>
+      </div>
+      <div class="drop-status" id="dropStatus"></div>
+      <label class="field-label">… oder Text direkt einfügen</label>
       <textarea id="importText" placeholder="F: ...&#10;A: ...&#10;---"></textarea>
       <div class="row" style="margin-top:8px">
         <button class="primary" id="importBtn">Einfügen &amp; anhängen</button>
@@ -523,6 +557,7 @@ A: 56
 
 <div class="goal-flash" id="goalFlash">TOR!</div>
 <canvas id="confetti"></canvas>
+<div class="file-overlay" id="fileOverlay">📥 Datei loslassen, um Fragen zu importieren</div>
 
 <!-- KaTeX für Formeldarstellung ($…$ inline, $$…$$ abgesetzt). Fällt das CDN aus, bleibt der Rohtext lesbar. -->
 <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
@@ -977,6 +1012,58 @@ A: 56
         toastBtn("importBtn", "Nichts erkannt");
       }
     };
+
+    // ----- Datei-Import (Drag & Drop aufs Fenster + Klick-Auswahl) -----
+    const fileInput = document.getElementById("fileInput");
+    const dropzone = document.getElementById("dropzone");
+    const dropStatus = document.getElementById("dropStatus");
+    const fileOverlay = document.getElementById("fileOverlay");
+
+    dropzone.onclick = () => fileInput.click();
+    fileInput.onchange = () => { importFiles(fileInput.files); fileInput.value = ""; };
+
+    function importFiles(fileList) {
+      const files = [...fileList];
+      if (!files.length) return;
+      let added = 0, pending = files.length;
+      files.forEach(file => {
+        const reader = new FileReader();
+        reader.onload = () => { added += parseImport(String(reader.result)); done(); };
+        reader.onerror = done;
+        reader.readAsText(file);
+      });
+      function done() {
+        if (--pending > 0) return;
+        if (added > 0) persistAndSync();
+        setDropStatus(added > 0
+          ? `✓ ${added} Aufgabe${added === 1 ? "" : "n"} importiert`
+          : "In der/den Datei(en) nichts im F:/A:/---‑Format erkannt.");
+      }
+    }
+    function setDropStatus(msg) {
+      dropStatus.textContent = msg;
+      dropStatus.style.color = msg.startsWith("✓") ? "#4ade80" : "#fca5a5";
+      setTimeout(() => { if (dropStatus.textContent === msg) dropStatus.textContent = ""; }, 5000);
+    }
+
+    // Nur bei echten Datei-Drags reagieren (nicht beim internen Sortieren der Liste)
+    const hasFiles = (e) => e.dataTransfer && [...(e.dataTransfer.types || [])].includes("Files");
+    let dragDepth = 0;
+    window.addEventListener("dragenter", (e) => {
+      if (!hasFiles(e)) return;
+      dragDepth++; fileOverlay.classList.add("show");
+    });
+    window.addEventListener("dragover", (e) => { if (hasFiles(e)) e.preventDefault(); });
+    window.addEventListener("dragleave", (e) => {
+      if (!hasFiles(e)) return;
+      if (--dragDepth <= 0) { dragDepth = 0; fileOverlay.classList.remove("show"); }
+    });
+    window.addEventListener("drop", (e) => {
+      if (!hasFiles(e)) return;
+      e.preventDefault();
+      dragDepth = 0; fileOverlay.classList.remove("show");
+      importFiles(e.dataTransfer.files);
+    });
 
     function parseImport(text) {
       if (!text || !text.trim()) return 0;

@@ -24,7 +24,12 @@ Beide Fenster synchronisieren sich live über `BroadcastChannel`, mit `localStor
 
    > Extrahiere alle Übungsaufgaben und deren Lösungen aus diesem PDF. Formatiere die Ausgabe exakt so: Für jede Aufgabe eine Zeile 'F: &lt;Frage&gt;', eine Zeile 'A: &lt;Antwort&gt;', dann eine Zeile mit nur '---' als Trennzeichen. Keine zusätzlichen Erklärungen oder Nummerierungen.
 
-3. Die Ausgabe in der Lehrer-Ansicht unter „Import" einfügen — die Aufgaben werden automatisch angehängt.
+3. Die Ausgabe in der Lehrer-Ansicht unter „Import" einbringen — auf drei Wegen:
+   - Text **direkt einfügen** ins Feld, oder
+   - eine **`.txt`-Datei** aufs Fenster **ziehen** (Drag & Drop), oder
+   - im Import-Panel auf die Ablage-Fläche **klicken** und die Datei auswählen.
+
+   Die Aufgaben werden jeweils automatisch geparst und angehängt.
 
 Format:
 
