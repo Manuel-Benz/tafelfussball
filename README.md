@@ -34,21 +34,20 @@ In den Einstellungen der Lehrer:innen-Ansicht lässt sich die Oberfläche zwisch
 
 ## Darstellung
 
-Ebenfalls in den Einstellungen: **Auto / Hell / Dunkel**. „Auto" folgt der Systemeinstellung (dunkles Blau bzw. warmes Sandweiß), Hell/Dunkel erzwingen das jeweilige Schema — synchron in beiden Fenstern.
+Ebenfalls in den Einstellungen: **Auto / Hell / Dunkel**. „Auto" folgt der Systemeinstellung (dunkles Blau bzw. warmes Sandweiss), Hell/Dunkel erzwingen das jeweilige Schema — synchron in beiden Fenstern.
 
 ## Aufgaben aus PDF importieren
 
 1. Aufgabenblatt (PDF) in einem KI-Tool (Claude/ChatGPT) öffnen.
 2. Diesen Prompt zusammen mit dem PDF einfügen:
 
-   > Extrahiere alle Übungsaufgaben und deren Lösungen aus diesem PDF. Formatiere die Ausgabe exakt so: Für jede Aufgabe eine Zeile 'F: &lt;Frage&gt;', eine Zeile 'A: &lt;Antwort&gt;', dann eine Zeile mit nur '---' als Trennzeichen. Mathematische Formeln als LaTeX in Dollarzeichen schreiben ($...$ für inline, $$...$$ für abgesetzt). Keine zusätzlichen Erklärungen oder Nummerierungen. Gib das Ergebnis als reinen Text aus, den ich als .txt-Datei speichern kann.
+   > Extrahiere alle Übungsaufgaben und deren Lösungen aus diesem PDF. Formatiere sie exakt so: Für jede Aufgabe eine Zeile 'F: &lt;Frage&gt;', eine Zeile 'A: &lt;Antwort&gt;', dann eine Zeile mit nur '---' als Trennzeichen. Mathematische Formeln als LaTeX in Dollarzeichen schreiben ($...$ für inline, $$...$$ für abgesetzt). Keine zusätzlichen Erklärungen oder Nummerierungen. Erstelle daraus direkt eine .txt-Datei zum Herunterladen; falls du Dateien direkt speichern kannst, lege sie in meinen Downloads oder auf dem Desktop ab.
 
-3. Die Ausgabe in der Lehrer:innen-Ansicht unter „Import" einbringen — auf drei Wegen:
-   - Text **direkt einfügen** ins Feld, oder
-   - eine **`.txt`-Datei** aufs Fenster **ziehen** (Drag & Drop), oder
-   - im Import-Panel auf die Ablage-Fläche **klicken** und die Datei auswählen.
+3. Die erhaltene `.txt`-Datei in der Lehrer:innen-Ansicht einbringen (Box „Aufgaben" → Import):
+   - die Datei aufs Fenster **ziehen** (Drag & Drop), oder
+   - auf die Ablage-Fläche **klicken** und die Datei auswählen.
 
-   Die Aufgaben werden jeweils automatisch geparst und angehängt.
+   Die Aufgaben werden automatisch geparst und angehängt. Einzelne Aufgaben lassen sich auch von Hand unter „Aufgabe hinzufügen" erfassen.
 
 Format:
 
