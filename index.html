@@ -21,6 +21,7 @@
     --border: #334155;
     --input-bg: #0f172a;
     --ok: #4ade80;           /* Erfolgs-Feedback (Import) */
+    --err: #cf3c3c;          /* Fehler-Feedback (Import); funktioniert auf hell + dunkel */
     --answer-label: #e08a84; /* "Lösung"-Label über der Antwort */
   }
   /* Hell: warmes, helles Sandweiss.
@@ -792,7 +793,6 @@
     currentTaskId: null,
     history: [],             // gezeigte Task-IDs, für "Frage zurück" (auch im Zufallsmodus)
     asked: [],               // in dieser Runde bereits gezeigte Task-IDs (jede Frage nur einmal)
-    finished: false,         // Runde beendet (alle Fragen durch)?
     revealed: false,         // Lösung für die Klasse aufgedeckt?
     order: "sequential",     // "sequential" | "random"
     lang: "de",              // UI-Sprache (de/en), synchronisiert beide Fenster
@@ -822,7 +822,6 @@
       s.lang = s.lang === "en" ? "en" : "de";
       if (s.theme !== "light" && s.theme !== "dark") s.theme = "auto";
       s.revealed = s.revealed === true;
-      s.finished = s.finished === true;
       if (!Array.isArray(s.history)) s.history = [];
       if (!Array.isArray(s.asked)) s.asked = [];
       return s;
@@ -870,6 +869,10 @@
   // ---------- Helpers ----------
   const maxIndex = () => state.stationsPerSide;   // Ball reicht von -max .. +max
   const currentTask = () => state.tasks.find(t => t.id === state.currentTaskId) || null;
+  // Runde beendet? Abgeleitet statt gespeichert — so kann der Zustand nie
+  // vergessen werden, wenn Aufgaben dazukommen oder zurückgesetzt wird.
+  const roundFinished = () => state.tasks.length > 0 && state.currentTaskId === null
+    && state.tasks.every(t => state.asked.includes(t.id));
   function uid() {
     return "t" + Math.random().toString(36).slice(2, 9) + (state.rev);
   }
@@ -991,10 +994,10 @@
     // Frage / Lösung (KaTeX ist teuer -> nur bei Textänderung neu rendern)
     const task = currentTask();
     const qEl = document.getElementById("questionText");
-    const qKey = task ? task.id + "" + task.q : (state.finished ? "finished" : "");
+    const qKey = task ? task.id + "" + task.q : (roundFinished() ? "finished" : "");
     if (qKey !== lastRenderedQ) {
       if (task) qEl.textContent = task.q;
-      else if (state.finished) qEl.textContent = tr("roundDone");
+      else if (roundFinished()) qEl.textContent = tr("roundDone");
       else qEl.innerHTML = '<span class="empty-hint">' + tr("noQuestion") + '</span>';
       renderMath(qEl);
       lastRenderedQ = qKey;
@@ -1064,14 +1067,15 @@
     // Ein Button führt durchs Spiel: Starten -> Antwort aufdecken -> Nächste Frage -> ... -> Runde beendet
     const nextBtn = document.getElementById("nextTask");
     const started = state.currentTaskId !== null;
-    nextBtn.textContent = state.finished ? tr("btnDone")
+    const finished = roundFinished();
+    nextBtn.textContent = finished ? tr("btnDone")
       : !started ? tr("btnStart")
       : !state.revealed ? tr("btnReveal")
       : tr("btnNext");
-    nextBtn.classList.toggle("start-mode", !started && !state.finished);
-    nextBtn.disabled = state.tasks.length === 0 || state.finished;
+    nextBtn.classList.toggle("start-mode", !started && !finished);
+    nextBtn.disabled = state.tasks.length === 0 || finished;
 
-    document.getElementById("resetTasksBtn").disabled = !started && !state.finished;
+    document.getElementById("resetTasksBtn").disabled = !started && !finished;
 
     // Task list — nur neu bauen, wenn sich Aufgaben/Auswahl geändert haben.
     // (Sonst wird bei jedem Ballzug die Liste zerstört, inkl. laufendem Drag&Drop.)
@@ -1106,7 +1110,7 @@
     const counter = document.getElementById("taskCounter");
     if (state.tasks.length === 0) {
       counter.textContent = tr("counterNone");
-    } else if (state.finished) {
+    } else if (roundFinished()) {
       counter.textContent = tr("counterDone", state.tasks.length);
     } else if (state.currentTaskId !== null) {
       // Position der ANGEZEIGTEN Frage (nach ⌘← kann das eine frühere sein)
@@ -1175,13 +1179,11 @@
     const askedSet = new Set(state.asked);
     const candidates = state.tasks.filter(t => !askedSet.has(t.id));
     if (candidates.length === 0) {
-      state.finished = true; // Runde durch: alle Fragen einmal gezeigt
-      state.currentTaskId = null;
+      state.currentTaskId = null; // Runde durch: alle Fragen einmal gezeigt (-> roundFinished)
       persistAndSync();
       return;
     }
     if (state.asked.length === 0) state.ball = 0; // Rundenstart: Feld sauber zentrieren
-    state.finished = false;
     const next = state.order === "random"
       ? candidates[Math.floor(Math.random() * candidates.length)]
       : candidates[0]; // erste noch nicht gezeigte Frage in Listenreihenfolge
@@ -1245,7 +1247,6 @@
     state.currentTaskId = id;
     state.seqPointer = idx;
     state.revealed = false;
-    state.finished = false; // zurück aus dem "Runde beendet"-Zustand
     persistAndSync();
   }
 
@@ -1328,7 +1329,6 @@
       state.seqPointer = -1;
       state.history = [];
       state.asked = [];
-      state.finished = false;
       state.revealed = false;
       persistAndSync();
     };
@@ -1339,7 +1339,6 @@
       state.seqPointer = -1;
       state.history = [];
       state.asked = [];
-      state.finished = false;
       state.revealed = false;
       persistAndSync();
     };
@@ -1378,7 +1377,6 @@
       const a = document.getElementById("newA").value.trim();
       if (!q) return;
       state.tasks.push({ id: uid(), q, a });
-      state.finished = false; // neue Frage -> Runde kann weitergehen
       document.getElementById("newQ").value = "";
       document.getElementById("newA").value = "";
       persistAndSync();
@@ -1390,7 +1388,7 @@
     document.getElementById("clearTasks").onclick = () => {
       if (state.tasks.length && confirm(tr("confirmClear"))) {
         state.tasks = []; state.currentTaskId = null; state.seqPointer = -1;
-        state.asked = []; state.history = []; state.finished = false; state.revealed = false;
+        state.asked = []; state.history = []; state.revealed = false;
         persistAndSync();
       }
     };
@@ -1406,7 +1404,6 @@
         state.currentTaskId = id;
         state.seqPointer = state.tasks.findIndex(t => t.id === id);
         state.revealed = false;
-        state.finished = false;
         if (!state.asked.includes(id)) state.asked.push(id);
         pushHistory(id);
         persistAndSync();
@@ -1497,7 +1494,7 @@
     }
     function setDropStatus(msg) {
       dropStatus.textContent = msg;
-      dropStatus.style.color = msg.startsWith("✓") ? "var(--ok)" : "var(--answer)"; /* themed: lesbar in hell + dunkel */
+      dropStatus.style.color = msg.startsWith("✓") ? "var(--ok)" : "var(--err)";
       setTimeout(() => { if (dropStatus.textContent === msg) dropStatus.textContent = ""; }, 5000);
     }
 
@@ -1542,7 +1539,6 @@
         });
         if (q !== null) pushTask(q, a);
       });
-      if (count > 0) state.finished = false; // neue Fragen -> Runde kann weitergehen
       return count;
     }
 
