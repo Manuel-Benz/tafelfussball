@@ -338,9 +338,10 @@
   /* ghost + danger = dezente Umriss-Variante statt vollrot */
   button.ghost.danger { background: transparent; color: #dc2626; border-color: rgba(220,38,38,.55); }
   button.icon { padding: 6px 10px; }
-  /* Dezenter Fensterwechsel-Button oben rechts in der Beamer-Ansicht (Optik von ghost) */
+  /* Dezenter Fensterwechsel-Button unten rechts in der Beamer-Ansicht (Optik von ghost);
+     oben rechts würde er dem Scoreboard zu nahe kommen */
   .view-switch {
-    position: fixed; top: 10px; right: 10px; z-index: 60;
+    position: fixed; bottom: 10px; right: 10px; z-index: 60;
     display: none;
     color: var(--muted); font-size: 14px;
     opacity: .5;
