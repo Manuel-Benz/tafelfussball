@@ -676,6 +676,7 @@
       tasks: 'Aufgaben', deleteAll: 'Alle löschen',
       exportTasks: 'Exportieren (.txt)',
       exportTasksTitle: 'Alle Aufgaben als .txt-Datei sichern — wieder importierbar',
+      exportMarker: 'F',
       importTitle: 'Import',
       copyKiPrompt: 'KI-Prompt kopieren',
       dropHere: '📥 <b>Datei hierher ziehen</b><br><small>oder klicken zum Auswählen (.txt im F:/A:/---‑Format)</small>',
@@ -731,6 +732,7 @@
       tasks: 'Tasks', deleteAll: 'Delete all',
       exportTasks: 'Export (.txt)',
       exportTasksTitle: 'Save all tasks as a .txt file — can be re-imported',
+      exportMarker: 'Q',
       importTitle: 'Import',
       copyKiPrompt: 'Copy AI prompt',
       dropHere: '📥 <b>Drag a file here</b><br><small>or click to choose (.txt in Q:/A:/--- format)</small>',
@@ -1428,11 +1430,10 @@
     document.getElementById("addTask").onclick = addTask;
     document.getElementById("newA").addEventListener("keydown", e => { if (e.key === "Enter") addTask(); });
 
-    // Aufgaben als .txt im Import-Format sichern (Backup, Gerätewechsel, Weitergabe)
+    // Aufgaben als .txt im Import-Format sichern (Backup, Gerätewechsel, Weitergabe).
+    // Ohne Aufgaben ist der Button disabled (renderControls), ein Leer-Guard ist unnötig.
     document.getElementById("exportTasks").onclick = () => {
-      if (!state.tasks.length) return;
-      const marker = currentLang === "en" ? "Q" : "F";
-      const txt = state.tasks.map(t => `${marker}: ${t.q}\nA: ${t.a}`).join("\n---\n") + "\n";
+      const txt = state.tasks.map(t => `${tr("exportMarker")}: ${t.q}\nA: ${t.a}`).join("\n---\n") + "\n";
       const url = URL.createObjectURL(new Blob([txt], { type: "text/plain;charset=utf-8" }));
       const a = document.createElement("a");
       a.href = url;
