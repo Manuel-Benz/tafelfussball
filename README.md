@@ -60,6 +60,8 @@ A: 56
 ---
 ```
 
+Umgekehrt sichert **„Exportieren (.txt)"** (Box „Aufgaben") alle erfassten Aufgaben als Datei in genau diesem Format — als Backup, für den Gerätewechsel oder zum Weitergeben an Kolleg:innen.
+
 ## Formeln (KaTeX)
 
 Fragen und Lösungen dürfen mathematische Formeln enthalten. Schreibe LaTeX zwischen `$…$` (inline) oder `$$…$$` (abgesetzt):

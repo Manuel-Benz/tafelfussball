@@ -11,7 +11,8 @@
 - Panel „Meine Sammlungen" in der Lehrer:innen-Ansicht: speichern, laden, umbenennen, löschen.
 
 ### 2. Export/Backup als Datei (Sicherheitsnetz)
-- Ganze Sammlung als eine JSON-Datei exportieren und wieder importieren.
+- ✅ Für die aktuelle Aufgabenliste umgesetzt: Button „Exportieren (.txt)" im Aufgaben-Panel schreibt alle Aufgaben im Import-Format (`F:`/`A:`/`---`) — direkt wieder importierbar.
+- Offen für später: ganze Sammlung (mehrere Sets) als eine JSON-Datei exportieren und wieder importieren.
 - Wichtig, weil `localStorage` an Browser + Gerät gebunden ist (weg beim Löschen der Website-Daten); deckt auch den Gerätewechsel ab.
 
 ### 3. Teilen per Link (optional, später)

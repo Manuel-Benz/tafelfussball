@@ -338,12 +338,12 @@
   /* ghost + danger = dezente Umriss-Variante statt vollrot */
   button.ghost.danger { background: transparent; color: #dc2626; border-color: rgba(220,38,38,.55); }
   button.icon { padding: 6px 10px; }
-  /* Dezenter Fensterwechsel-Button oben rechts in der Beamer-Ansicht (Optik von ghost + icon) */
+  /* Dezenter Fensterwechsel-Button oben rechts in der Beamer-Ansicht (Optik von ghost) */
   .view-switch {
     position: fixed; top: 10px; right: 10px; z-index: 60;
     display: none;
-    color: var(--muted); font-size: 12px;
-    opacity: .35;
+    color: var(--muted); font-size: 14px;
+    opacity: .5;
   }
   .view-switch:hover { opacity: 1; color: var(--text); }
   body.view-beamer .view-switch { display: block; }
@@ -550,6 +550,7 @@
       <summary><span data-i18n="tasks">Aufgaben</span> (<span id="taskCount">0</span>)</summary>
       <div id="taskList"></div>
       <div class="row" style="margin-top:8px">
+        <button class="ghost" id="exportTasks" data-i18n="exportTasks" data-i18n-title="exportTasksTitle" title="Alle Aufgaben als .txt-Datei sichern — wieder importierbar">Exportieren (.txt)</button>
         <button class="ghost danger" id="clearTasks" data-i18n="deleteAll">Alle löschen</button>
       </div>
 
@@ -601,13 +602,13 @@
         <button class="ghost" id="resetAll" data-i18n="resetAll" data-i18n-title="resetAllTitle" title="Punkte, Ball und Fragerunde zurücksetzen — Aufgaben bleiben erhalten">Alles zurücksetzen</button>
       </div>
       <div class="row grow" style="margin-top:8px">
-        <button class="ghost" id="gotoBeamer" data-i18n="toBeamer">🖥 Zur Beamer-Ansicht</button>
+        <button class="ghost" id="gotoBeamer" data-i18n="toBeamer">Zur Beamer-Ansicht</button>
       </div>
     </div>
   </aside>
 </div>
 
-<button class="ghost icon view-switch" id="gotoLehrer" data-i18n="toTeacher">Zur Lehrer:innen-Ansicht</button>
+<button class="ghost view-switch" id="gotoLehrer" data-i18n="toTeacher">Zur Lehrer:innen-Ansicht</button>
 
 <div class="goal-flash" id="goalFlash">TOR!</div>
 <canvas id="confetti"></canvas>
@@ -656,7 +657,7 @@
       btnStart: '▶ Spiel starten', btnReveal: '👁 Antwort aufdecken', btnNext: 'Nächste Frage ▶', btnDone: '🏁 Runde beendet',
       resetTasks: 'Fragen zurücksetzen',
       resetTasksTitle: 'Zurück zum Start — Aufgaben bleiben erhalten',
-      toBeamer: '🖥 Zur Beamer-Ansicht',
+      toBeamer: 'Zur Beamer-Ansicht',
       toTeacher: 'Zur Lehrer:innen-Ansicht',
       order: 'Reihenfolge', orderSeq: 'Der Reihe nach', orderRnd: 'Zufällig',
       counterNone: 'Keine Aufgaben erfasst.',
@@ -673,6 +674,8 @@
       qPh: 'z. B. Was ist 7 × 8?', aPh: 'z. B. 56',
       add: 'Hinzufügen',
       tasks: 'Aufgaben', deleteAll: 'Alle löschen',
+      exportTasks: 'Exportieren (.txt)',
+      exportTasksTitle: 'Alle Aufgaben als .txt-Datei sichern — wieder importierbar',
       importTitle: 'Import',
       copyKiPrompt: 'KI-Prompt kopieren',
       dropHere: '📥 <b>Datei hierher ziehen</b><br><small>oder klicken zum Auswählen (.txt im F:/A:/---‑Format)</small>',
@@ -709,7 +712,7 @@
       btnStart: '▶ Start game', btnReveal: '👁 Reveal answer', btnNext: 'Next question ▶', btnDone: '🏁 Round finished',
       resetTasks: 'Reset questions',
       resetTasksTitle: 'Back to the start — tasks are kept',
-      toBeamer: '🖥 To projector view',
+      toBeamer: 'To projector view',
       toTeacher: 'To teacher view',
       order: 'Order', orderSeq: 'In order', orderRnd: 'Random',
       counterNone: 'No tasks yet.',
@@ -726,6 +729,8 @@
       qPh: 'e.g. What is 7 × 8?', aPh: 'e.g. 56',
       add: 'Add',
       tasks: 'Tasks', deleteAll: 'Delete all',
+      exportTasks: 'Export (.txt)',
+      exportTasksTitle: 'Save all tasks as a .txt file — can be re-imported',
       importTitle: 'Import',
       copyKiPrompt: 'Copy AI prompt',
       dropHere: '📥 <b>Drag a file here</b><br><small>or click to choose (.txt in Q:/A:/--- format)</small>',
@@ -1109,6 +1114,7 @@
     nextBtn.disabled = state.tasks.length === 0 || finished;
 
     document.getElementById("resetTasksBtn").disabled = !started && !finished;
+    document.getElementById("exportTasks").disabled = state.tasks.length === 0;
 
     // Task list — nur neu bauen, wenn sich Aufgaben/Auswahl geändert haben.
     // (Sonst wird bei jedem Ballzug die Liste zerstört, inkl. laufendem Drag&Drop.)
@@ -1421,6 +1427,19 @@
     }
     document.getElementById("addTask").onclick = addTask;
     document.getElementById("newA").addEventListener("keydown", e => { if (e.key === "Enter") addTask(); });
+
+    // Aufgaben als .txt im Import-Format sichern (Backup, Gerätewechsel, Weitergabe)
+    document.getElementById("exportTasks").onclick = () => {
+      if (!state.tasks.length) return;
+      const marker = currentLang === "en" ? "Q" : "F";
+      const txt = state.tasks.map(t => `${marker}: ${t.q}\nA: ${t.a}`).join("\n---\n") + "\n";
+      const url = URL.createObjectURL(new Blob([txt], { type: "text/plain;charset=utf-8" }));
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `tafelfussball-aufgaben-${new Date().toISOString().slice(0, 10)}.txt`;
+      a.click();
+      URL.revokeObjectURL(url);
+    };
 
     document.getElementById("clearTasks").onclick = () => {
       if (state.tasks.length && confirm(tr("confirmClear"))) {
